@@ -11,6 +11,10 @@ const app = express();
 // Security middleware
 app.use(helmet());
 
+app.use(cors({
+  origin: '*', // Allow all origins (only for development)
+  credentials: true
+}));
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes

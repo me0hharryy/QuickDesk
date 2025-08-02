@@ -1,42 +1,414 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+/* QuickDesk Application Styles */
+
+/* Base styles */
+.App {
+  text-align: left;
+}
+
+/* Loading states */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+/* Error states */
+.error {
+  color: #d32f2f;
+  background-color: #ffebee;
+  padding: 16px;
+  border-radius: 4px;
+  margin: 16px 0;
+}
+
+/* Success states */
+.success {
+  color: #2e7d32;
+  background-color: #e8f5e8;
+  padding: 16px;
+  border-radius: 4px;
+  margin: 16px 0;
+}
+
+/* Utility classes */
+.text-center {
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.text-left {
+  text-align: left;
 }
 
-@keyframes logo-spin {
+.text-right {
+  text-align: right;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.visible {
+  display: block !important;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.gap-1 {
+  gap: 8px;
+}
+
+.gap-2 {
+  gap: 16px;
+}
+
+.gap-3 {
+  gap: 24px;
+}
+
+.mb-1 {
+  margin-bottom: 8px;
+}
+
+.mb-2 {
+  margin-bottom: 16px;
+}
+
+.mb-3 {
+  margin-bottom: 24px;
+}
+
+.mt-1 {
+  margin-top: 8px;
+}
+
+.mt-2 {
+  margin-top: 16px;
+}
+
+.mt-3 {
+  margin-top: 24px;
+}
+
+.p-1 {
+  padding: 8px;
+}
+
+.p-2 {
+  padding: 16px;
+}
+
+.p-3 {
+  padding: 24px;
+}
+
+/* Custom scrollbar for webkit browsers */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #780000 #f1f1f1;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #780000;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #a52a2a;
+}
+
+/* Ticket status colors */
+.status-open {
+  background-color: #c1121f !important;
+  color: white !important;
+}
+
+.status-in-progress {
+  background-color: #f57c00 !important;
+  color: white !important;
+}
+
+.status-resolved {
+  background-color: #669bbc !important;
+  color: white !important;
+}
+
+.status-closed {
+  background-color: #2e7d32 !important;
+  color: white !important;
+}
+
+/* Priority colors */
+.priority-low {
+  border-left: 4px solid #669bbc !important;
+}
+
+.priority-medium {
+  border-left: 4px solid #f57c00 !important;
+}
+
+.priority-high {
+  border-left: 4px solid #c1121f !important;
+}
+
+.priority-critical {
+  border-left: 4px solid #780000 !important;
+}
+
+/* Animation classes */
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease-in-out;
+}
+
+.bounce-in {
+  animation: bounceIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
   from {
-    transform: rotate(0deg);
+    opacity: 0;
   }
   to {
-    transform: rotate(360deg);
+    opacity: 1;
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 
-.card {
-  padding: 2em;
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
-.read-the-docs {
-  color: #888;
+/* Responsive helpers */
+@media (max-width: 768px) {
+  .mobile-hidden {
+    display: none !important;
+  }
+  
+  .mobile-visible {
+    display: block !important;
+  }
+  
+  .mobile-flex {
+    display: flex !important;
+  }
+  
+  .mobile-text-center {
+    text-align: center !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .desktop-hidden {
+    display: none !important;
+  }
+  
+  .desktop-visible {
+    display: block !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-only {
+    display: block !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  
+  .MuiPaper-root {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+  }
+}
+
+/* Focus styles for accessibility */
+.focus-visible {
+  outline: 2px solid #780000;
+  outline-offset: 2px;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .status-open,
+  .status-in-progress,
+  .status-resolved,
+  .status-closed {
+    border: 2px solid black !important;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .fade-in,
+  .slide-up,
+  .bounce-in {
+    animation: none !important;
+  }
+  
+  * {
+    transition: none !important;
+  }
+}
+
+/* Drag and drop styles */
+.drag-active {
+  background-color: rgba(120, 0, 0, 0.1) !important;
+  border-color: #780000 !important;
+}
+
+.drag-reject {
+  background-color: rgba(211, 47, 47, 0.1) !important;
+  border-color: #d32f2f !important;
+}
+
+/* File upload styles */
+.file-upload-zone {
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.file-upload-zone:hover {
+  background-color: rgba(120, 0, 0, 0.05);
+}
+
+/* Ticket card hover effects */
+.ticket-card {
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.ticket-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+/* Loading spinner */
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: #666;
+}
+
+.empty-state-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+/* Notification styles */
+.notification-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #c1121f;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+/* Custom Material-UI overrides */
+.MuiChip-root.status-chip {
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.MuiButton-root.primary-button {
+  background-color: #780000;
+  color: white;
+}
+
+.MuiButton-root.primary-button:hover {
+  background-color: #a52a2a;
+}
+
+.MuiButton-root.secondary-button {
+  background-color: #c1121f;
+  color: white;
+}
+
+.MuiButton-root.secondary-button:hover {
+  background-color: #e63946;
+}
+
+/* Dark theme support (if needed) */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #121212;
+    color: #ffffff;
+  }
+  
+  .MuiPaper-root {
+    background-color: #1e1e1e !important;
+  }
 }
