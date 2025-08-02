@@ -22,11 +22,13 @@ import { useNavigate } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
 import { useTickets } from '../../contexts/TicketContext';
 import { TICKET_PRIORITY, FILE_UPLOAD_CONFIG } from '../../utils/constants';
+import api from '../../services/api';
 
 const CreateTicket = () => {
   const navigate = useNavigate();
-  const { createTicket, categories, fetchCategories } = useTickets();
+  const { createTicket } = useTickets();
 
+  const [categories, setCategories] = useState([]);
   const [formData, setFormData] = useState({
     subject: '',
     description: '',
@@ -42,7 +44,37 @@ const CreateTicket = () => {
 
   useEffect(() => {
     fetchCategories();
-  }, [fetchCategories]);
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      console.log('Fetching categories...');
+      const token = localStorage.getItem('token');
+      console.log('Token exists:', !!token);
+      
+      // Add isActive=all parameter to get all categories
+      const response = await api.get('/api/categories?isActive=all');
+      console.log('Categories response:', response.data);
+      
+      const activeCategories = response.data.filter(category => category.isActive !== false);
+      setCategories(activeCategories);
+      
+      if (activeCategories.length === 0) {
+        setError('No active categories found. Please ask an admin to create categories.');
+      }
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      console.error('Error response:', error.response?.data);
+      
+      if (error.response?.status === 401) {
+        setError('Authentication failed. Please login again.');
+      } else if (error.response?.status === 403) {
+        setError('Access denied. Categories may not be available.');
+      } else {
+        setError('Failed to load categories. Please try again.');
+      }
+    }
+  };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     maxFiles: FILE_UPLOAD_CONFIG.maxFiles,
@@ -198,13 +230,34 @@ const CreateTicket = () => {
                   onChange={handleChange}
                   label="Category"
                 >
-                  {categories.map((category) => (
-                    <MenuItem key={category._id} value={category._id}>
-                      {category.name}
+                  {categories.length === 0 ? (
+                    <MenuItem disabled value="">
+                      <em>No categories available</em>
                     </MenuItem>
-                  ))}
+                  ) : (
+                    categories.map((category) => (
+                      <MenuItem key={category._id} value={category._id}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Box
+                            sx={{
+                              width: 12,
+                              height: 12,
+                              borderRadius: '50%',
+                              bgcolor: category.color || '#780000',
+                            }}
+                          />
+                          {category.name}
+                        </Box>
+                      </MenuItem>
+                    ))
+                  )}
                 </Select>
               </FormControl>
+              {categories.length === 0 && (
+                <Typography variant="caption" color="error" sx={{ mt: 0.5, display: 'block' }}>
+                  No categories found. Please ask an admin to create categories first.
+                </Typography>
+              )}
             </Grid>
 
             <Grid item xs={12} sm={6}>
@@ -332,7 +385,7 @@ const CreateTicket = () => {
                 <Button
                   type="submit"
                   variant="contained"
-                  disabled={loading}
+                  disabled={loading || categories.length === 0}
                   sx={{ minWidth: 120 }}
                 >
                   {loading ? 'Creating...' : 'Create Ticket'}

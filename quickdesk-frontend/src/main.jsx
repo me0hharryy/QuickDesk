@@ -27,4 +27,4 @@ root.render(
 );
 
 // Performance measuring
-reportWebVitals();
+//reportWebVitals();

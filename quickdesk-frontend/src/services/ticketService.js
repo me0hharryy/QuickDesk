@@ -1,11 +1,44 @@
-import api from './api'; // Assuming you have an api service configured
-import { API_ENDPOINTS } from '../utils/constants'; // Assuming you have these constants
+import api from './api';
+import { API_ENDPOINTS } from '../utils/constants';
 
 export const ticketService = {
+  // Categories
+  getCategories: async () => {
+    try {
+      console.log('Fetching categories from:', api.defaults.baseURL + API_ENDPOINTS.CATEGORIES);
+      
+      // Add isActive=all parameter to get all categories
+      const response = await api.get(API_ENDPOINTS.CATEGORIES + '?isActive=all');
+      
+      console.log('Categories fetched successfully:', response.data.length, 'categories');
+      
+      return { success: true, data: response.data };
+    } catch (error) {
+      console.error('Failed to fetch categories:', error.response?.data || error.message);
+      
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Failed to fetch categories',
+      };
+    }
+  },
+
+  createCategory: async (categoryData) => {
+    try {
+      const response = await api.post(API_ENDPOINTS.CATEGORIES, categoryData);
+      return { success: true, data: response.data };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Failed to create category',
+      };
+    }
+  },
+
+  // Tickets
   getTickets: async (params = {}) => {
     try {
       const response = await api.get(API_ENDPOINTS.TICKETS.BASE, { params });
-      // Corrected: Keyed the response data
       return { success: true, data: response.data };
     } catch (error) {
       return {
@@ -18,7 +51,6 @@ export const ticketService = {
   getTicketById: async (id) => {
     try {
       const response = await api.get(`${API_ENDPOINTS.TICKETS.BASE}/${id}`);
-      // Corrected: Keyed the response data
       return { success: true, data: response.data };
     } catch (error) {
       return {
@@ -32,7 +64,6 @@ export const ticketService = {
     try {
       const formData = new FormData();
       
-      // Append text fields
       Object.keys(ticketData).forEach(key => {
         if (key !== 'attachments') {
           if (Array.isArray(ticketData[key])) {
@@ -43,7 +74,6 @@ export const ticketService = {
         }
       });
 
-      // Append files
       if (ticketData.attachments && ticketData.attachments.length > 0) {
         ticketData.attachments.forEach(file => {
           formData.append('attachments', file);
@@ -56,7 +86,6 @@ export const ticketService = {
         },
       });
 
-      // Corrected: Keyed the response data
       return { success: true, data: response.data };
     } catch (error) {
       return {
@@ -69,7 +98,6 @@ export const ticketService = {
   updateTicket: async (id, updates) => {
     try {
       const response = await api.put(`${API_ENDPOINTS.TICKETS.BASE}/${id}`, updates);
-      // Corrected: Keyed the response data
       return { success: true, data: response.data };
     } catch (error) {
       return {
@@ -82,7 +110,7 @@ export const ticketService = {
   deleteTicket: async (id) => {
     try {
       const response = await api.delete(`${API_ENDPOINTS.TICKETS.BASE}/${id}`);
-      return { success: true, data: response.data }; // This was already correct
+      return { success: true, data: response.data };
     } catch (error) {
       return {
         success: false,
@@ -96,7 +124,6 @@ export const ticketService = {
       const response = await api.patch(API_ENDPOINTS.TICKETS.ASSIGN(id), {
         assignedTo,
       });
-      // Corrected: Keyed the response data
       return { success: true, data: response.data };
     } catch (error) {
       return {
@@ -111,7 +138,6 @@ export const ticketService = {
       const response = await api.post(API_ENDPOINTS.TICKETS.VOTE(id), {
         type: voteType,
       });
-      // Corrected: Keyed the response data
       return { success: true, data: response.data };
     } catch (error) {
       return {
@@ -130,7 +156,6 @@ export const ticketService = {
         formData.append('isInternal', commentData.isInternal);
       }
 
-      // Add attachments if any
       if (commentData.attachments && commentData.attachments.length > 0) {
         commentData.attachments.forEach(file => {
           formData.append('attachments', file);
@@ -147,7 +172,6 @@ export const ticketService = {
         }
       );
 
-      // Corrected: Keyed the response data
       return { success: true, data: response.data };
     } catch (error) {
       return {
@@ -160,7 +184,7 @@ export const ticketService = {
   getStatistics: async () => {
     try {
       const response = await api.get(API_ENDPOINTS.TICKETS.STATISTICS);
-      return { success: true, data: response.data }; // This was already correct
+      return { success: true, data: response.data };
     } catch (error) {
       return {
         success: false,
