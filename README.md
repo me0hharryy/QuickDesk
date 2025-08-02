@@ -1,4 +1,4 @@
-# QuickDesk 헬
+# QuickDesk 
 
 A streamlined and user-friendly help desk solution designed to simplify ticket management and enhance communication between users and support teams.
 
@@ -125,13 +125,15 @@ Make sure you have the following installed:
 
 This project is built with modern technologies to ensure performance and scalability.
 
--   **Frontend**: *(e.g., React, Vue, Angular)*
--   **Backend**: *(e.g., Node.js, Express.js, Django)*
--   **Database**: *(e.g., MongoDB, PostgreSQL)*
--   **Authentication**: *(e.g., JWT, OAuth)*
--   **Deployment**: *(e.g., Heroku, Vercel, AWS)*
+-   **Frontend**: *(React)*
+-   **Backend**: *(Node.js, Express.js)*
+-   **Database**: *(MongoDB)*
+-   **Authentication**: *(JWT)*
+-   **Deployment**: *(Heroku, Vercel, Render)*
 
 ---
+
+
 
 ## 🤝 Contributing
 
