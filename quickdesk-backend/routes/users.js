@@ -261,7 +261,16 @@ router.delete('/:id', auth, roleAuth('admin'), async (req, res) => {
     res.status(500).json({ message: 'Failed to delete user' });
   }
 });
-
+router.get('/agents', auth, async (req, res) => {
+  try {
+    const agents = await User.find({ role: { $in: ['agent', 'admin'] } })
+      .select('username email')
+      .sort({ username: 1 });
+    res.json(agents);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch agents' });
+  }
+});
 // Get user dashboard data
 router.get('/:id/dashboard', auth, async (req, res) => {
   try {

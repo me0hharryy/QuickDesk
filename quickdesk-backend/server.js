@@ -56,8 +56,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/categories', categoryRoutes);
-
-
+app.use('/api/users', require('./routes/users'));
+app.use('/api/tickets', require('./routes/tickets'));
+app.use('/api/users', require('./routes/users'));
 // --- Server Initialization ---
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

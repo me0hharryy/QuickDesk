@@ -10,7 +10,7 @@ const Category = require('../models/Category');
 const auth = require('../middleware/auth');
 const roleAuth = require('../middleware/roleAuth');
 const { sendTicketNotification } = require('../utils/email');
-
+const mongoose = require('mongoose');
 const router = express.Router();
 
 // Ensure uploads directory exists
@@ -240,46 +240,92 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// Get ticket by ID
+// Get ticket by ID - ADD THIS IF MISSING
 router.get('/:id', auth, async (req, res) => {
   try {
+    console.log('Fetching ticket with ID:', req.params.id); // Debug log
+    
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      console.log('Invalid ticket ID format');
+      return res.status(400).json({ error: 'Invalid ticket ID' });
+    }
+
     const ticket = await Ticket.findById(req.params.id)
-      .populate('createdBy', 'username email profile')
-      .populate('assignedTo', 'username email profile')
-      .populate('category', 'name color description')
-      .populate('resolvedBy', 'username email');
+      .populate('createdBy', 'username email')
+      .populate('assignedTo', 'username email')
+      .populate('category', 'name color description');
 
     if (!ticket) {
-      return res.status(404).json({ message: 'Ticket not found' });
+      console.log('Ticket not found in database');
+      return res.status(404).json({ error: 'Ticket not found' });
     }
 
-    // Check permissions
-    if (req.user.role === 'user' && ticket.createdBy._id.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: 'Access denied' });
-    }
-
-    // Increment view count
-    ticket.views += 1;
-    await ticket.save();
-
-    // Get comments
-    const comments = await Comment.find({ ticket: ticket._id })
-      .populate('user', 'username email profile')
-      .sort({ createdAt: 1 });
-
-    // Filter internal comments for regular users
-    const filteredComments = req.user.role === 'user' 
-      ? comments.filter(comment => !comment.isInternal)
-      : comments;
-
-    res.json({
+    console.log('Ticket found:', ticket.subject);
+    
+    res.json({ 
       ticket,
-      comments: filteredComments
+      comments: [] // For now, empty comments
     });
+    
   } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch ticket' });
+    console.error('Ticket detail fetch error:', error);
+    res.status(500).json({ error: 'Failed to fetch ticket details' });
   }
 });
+
+
+// Get ticket by ID
+// Update your existing GET /:id route with this
+router.get('/:id', auth, async (req, res) => {
+  try {
+    const ticketId = req.params.id;
+    
+    // Debug logging
+    console.log('🔍 Fetching ticket with ID:', ticketId);
+    console.log('🔍 User requesting:', req.user.username);
+    
+    // Validate MongoDB ObjectId format
+    if (!mongoose.Types.ObjectId.isValid(ticketId)) {
+      console.log('❌ Invalid ticket ID format');
+      return res.status(400).json({ error: 'Invalid ticket ID format' });
+    }
+
+    // Find ticket with proper error handling
+    const ticket = await Ticket.findById(ticketId)
+      .populate('createdBy', 'username email profile')
+      .populate('assignedTo', 'username email profile')  
+      .populate('category', 'name color description')
+      .lean(); // Use lean() for better performance
+
+    if (!ticket) {
+      console.log('❌ Ticket not found in database:', ticketId);
+      return res.status(404).json({ error: 'Ticket not found' });
+    }
+
+    console.log('✅ Ticket found:', ticket.subject);
+
+    // Return ticket data
+    res.json({
+      ticket: ticket,
+      comments: [] // Empty for now, we'll add comments later if needed
+    });
+
+  } catch (error) {
+    console.error('❌ Database error fetching ticket:', error);
+    console.error('❌ Error details:', error.message);
+    
+    // Send specific error based on error type
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ticket ID format' });
+    }
+    
+    res.status(500).json({ 
+      error: 'Failed to fetch ticket details',
+      details: error.message // Remove this in production
+    });
+  }
+});
+
 
 // Update ticket
 router.put('/:id', auth, async (req, res) => {
